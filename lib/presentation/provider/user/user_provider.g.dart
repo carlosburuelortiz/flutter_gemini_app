@@ -6,11 +6,11 @@ part of 'user_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$geminiUserHash() => r'41f04aabfd5f709a696fb2af8d8b3b28eb494cf3';
+String _$geminiUserHash() => r'cdbe5dd882f177bc90f8eafc6274e4e4d41adc34';
 
 /// See also [geminiUser].
 @ProviderFor(geminiUser)
-final geminiUserProvider = AutoDisposeProvider<Object?>.internal(
+final geminiUserProvider = AutoDisposeProvider<User>.internal(
   geminiUser,
   name: r'geminiUserProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,23 @@ final geminiUserProvider = AutoDisposeProvider<Object?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef GeminiUserRef = AutoDisposeProviderRef<Object?>;
+typedef GeminiUserRef = AutoDisposeProviderRef<User>;
+String _$userHash() => r'46e08ced5d99891aaadf35615891778f8918a4de';
+
+/// See also [user].
+@ProviderFor(user)
+final userProvider = AutoDisposeProvider<User>.internal(
+  user,
+  name: r'userProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$userHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UserRef = AutoDisposeProviderRef<User>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
