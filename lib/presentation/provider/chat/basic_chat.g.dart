@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'is_gemini_writing.dart';
+part of 'basic_chat.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$isGeminiWritingHash() => r'5eaa3c858c2e9437417235be50cf9a59b3e4c6f6';
+String _$basicChatHash() => r'86502044009d750ff9a4c755f7485391d6b4099d';
 
-/// See also [IsGeminiWriting].
-@ProviderFor(IsGeminiWriting)
-final isGeminiWritingProvider =
-    AutoDisposeNotifierProvider<IsGeminiWriting, bool>.internal(
-      IsGeminiWriting.new,
-      name: r'isGeminiWritingProvider',
+/// See also [BasicChat].
+@ProviderFor(BasicChat)
+final basicChatProvider =
+    AutoDisposeNotifierProvider<BasicChat, List<Message>>.internal(
+      BasicChat.new,
+      name: r'basicChatProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$isGeminiWritingHash,
+          : _$basicChatHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$IsGeminiWriting = AutoDisposeNotifier<bool>;
+typedef _$BasicChat = AutoDisposeNotifier<List<Message>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
