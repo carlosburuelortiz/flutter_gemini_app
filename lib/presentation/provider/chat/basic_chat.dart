@@ -1,6 +1,9 @@
-import 'package:flutter_chat_types/flutter_chat_types.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart';
+
+import 'package:gemini_app/presentation/provider/chat/is_gemini_writing.dart';
+import 'package:gemini_app/presentation/provider/user/user_provider.dart';
 
 part 'basic_chat.g.dart';
 
@@ -24,6 +27,26 @@ class BasicChat extends _$BasicChat {
       id: uuid.v4(),
       author: author,
       text: partialText.text,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    state = [message, ...state];
+    _geminiTextResponse(partialText.text);
+  }
+
+  void _geminiTextResponse(String prompt) async {
+    final isGeminiWriting = ref.read(isGeminiWritingProvider.notifier);
+    final geminiUser = ref.read(geminiUserProvider);
+    isGeminiWriting.setIsWriting();
+
+    await Future.delayed(Duration(seconds: 2));
+
+    isGeminiWriting.setIsNotWriting();
+
+    final message = TextMessage(
+      id: uuid.v4(),
+      author: geminiUser,
+      text: 'Hola Mundo desde Gemini: $prompt',
       createdAt: DateTime.now().millisecondsSinceEpoch,
     );
 

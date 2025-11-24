@@ -7,8 +7,6 @@ import 'package:gemini_app/presentation/provider/chat/is_gemini_writing.dart';
 
 import 'package:gemini_app/presentation/provider/user/user_provider.dart';
 
-final messages = <types.Message>[];
-
 class BasicPromptScreen extends ConsumerWidget {
   const BasicPromptScreen({super.key});
 
