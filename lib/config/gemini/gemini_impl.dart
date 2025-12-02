@@ -4,14 +4,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GeminiImpl {
-  final Dio http = Dio(BaseOptions(baseUrl: dotenv.env['ENPOPOINT_API'] ?? ''));
+  final Dio _http = Dio(
+    BaseOptions(baseUrl: dotenv.env['ENPOPOINT_API'] ?? ''),
+  );
 
   Future<String> getReponse(String prompt) async {
-    final body = jsonEncode({'prompt': prompt});
-    final response = await http.post('/basic-prompt', data: body);
+    try {
+      final body = jsonEncode({'prompt': prompt});
+      final response = await _http.post('/basic-prompt', data: body);
 
-    print(response.data);
-
-    return 'Hola mundo desde Gemini';
+      return response.data;
+    } catch (e) {
+      throw Exception("Can't get Gemini response");
+    }
   }
 }
