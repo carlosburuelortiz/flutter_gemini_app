@@ -26,30 +26,33 @@ class BasicChat extends _$BasicChat {
   }
 
   void _addTextMessage(PartialText partialText, User author) {
-    final message = TextMessage(
-      id: uuid.v4(),
-      author: author,
-      text: partialText.text,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-    );
-
-    state = [message, ...state];
+    _createTextMessage(partialText.text, author);
     _geminiTextResponse(partialText.text);
   }
 
   void _geminiTextResponse(String prompt) async {
-    final isGeminiWriting = ref.read(isGeminiWritingProvider.notifier);
-    final geminiUser = ref.read(geminiUserProvider);
-    isGeminiWriting.setIsWriting();
+    _setGeminiWritingStatus(true);
 
+    final geminiUser = ref.read(geminiUserProvider);
     final textResponse = await gemini.getReponse(prompt);
 
-    isGeminiWriting.setIsNotWriting();
+    _setGeminiWritingStatus(false);
+    _createTextMessage(textResponse, geminiUser);
+  }
 
+  // helper methods
+  void _setGeminiWritingStatus(bool isWriting) {
+    final isGeminiWriting = ref.read(isGeminiWritingProvider.notifier);
+    isWriting
+        ? isGeminiWriting.setIsWriting()
+        : isGeminiWriting.setIsNotWriting();
+  }
+
+  void _createTextMessage(String text, User author) {
     final message = TextMessage(
       id: uuid.v4(),
-      author: geminiUser,
-      text: textResponse,
+      author: author,
+      text: text,
       createdAt: DateTime.now().millisecondsSinceEpoch,
     );
 
