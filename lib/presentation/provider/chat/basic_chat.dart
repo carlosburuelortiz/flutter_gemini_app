@@ -13,9 +13,11 @@ final uuid = Uuid();
 @riverpod
 class BasicChat extends _$BasicChat {
   final gemini = GeminiImpl();
+  late User geminiUser;
 
   @override
   List<Message> build() {
+    geminiUser = ref.read(geminiUserProvider);
     return [];
   }
 
@@ -27,17 +29,33 @@ class BasicChat extends _$BasicChat {
 
   void _addTextMessage(PartialText partialText, User author) {
     _createTextMessage(partialText.text, author);
-    _geminiTextResponse(partialText.text);
+    _geminiTextResponseStream(partialText.text);
   }
 
   void _geminiTextResponse(String prompt) async {
     _setGeminiWritingStatus(true);
 
-    final geminiUser = ref.read(geminiUserProvider);
     final textResponse = await gemini.getReponse(prompt);
 
     _setGeminiWritingStatus(false);
     _createTextMessage(textResponse, geminiUser);
+  }
+
+  void _geminiTextResponseStream(String prompt) async {
+    _createTextMessage('Gemini esta pensando...', geminiUser);
+    gemini.getResponseStream(prompt).listen((responseChunk) {
+      if (responseChunk.isEmpty) return;
+
+      final updatedMessages = [...state];
+      final updatedMessage = (updatedMessages.first as TextMessage).copyWith(
+        text: responseChunk,
+      );
+
+      updatedMessages[0] = updatedMessage;
+      state = updatedMessages;
+    });
+
+    // _createTextMessage(textResponse, geminiUser);
   }
 
   // helper methods
