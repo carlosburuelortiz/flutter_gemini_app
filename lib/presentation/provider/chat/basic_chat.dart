@@ -50,7 +50,7 @@ class BasicChat extends _$BasicChat {
     }
     await Future.delayed(Duration(milliseconds: 10));
     _createTextMessage(partialText.text, author);
-    // _geminiTextResponseStream(partialText.text);
+    _geminiTextResponseStream(partialText.text, images: images);
   }
 
   void _geminiTextResponse(String prompt) async {
@@ -62,9 +62,12 @@ class BasicChat extends _$BasicChat {
     _createTextMessage(textResponse, geminiUser);
   }
 
-  void _geminiTextResponseStream(String prompt) async {
+  void _geminiTextResponseStream(
+    String prompt, {
+    List<XFile> images = const [],
+  }) async {
     _createTextMessage('Gemini esta pensando...', geminiUser);
-    gemini.getResponseStream(prompt).listen((responseChunk) {
+    gemini.getResponseStream(prompt, files: images).listen((responseChunk) {
       if (responseChunk.isEmpty) return;
 
       final updatedMessages = [...state];
