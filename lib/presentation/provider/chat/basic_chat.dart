@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart';
@@ -21,8 +22,15 @@ class BasicChat extends _$BasicChat {
     return [];
   }
 
-  void addMessage({required PartialText partialText, required User user}) {
-    // Todo: agregar condición cuando vengan imagenes
+  void addMessage({
+    required PartialText partialText,
+    required User user,
+    List<XFile> images = const [],
+  }) {
+    if (images.isNotEmpty) {
+      _addTextMessageWithImages(partialText, user, images);
+      return;
+    }
 
     _addTextMessage(partialText, user);
   }
@@ -30,6 +38,19 @@ class BasicChat extends _$BasicChat {
   void _addTextMessage(PartialText partialText, User author) {
     _createTextMessage(partialText.text, author);
     _geminiTextResponseStream(partialText.text);
+  }
+
+  void _addTextMessageWithImages(
+    PartialText partialText,
+    User author,
+    List<XFile> images,
+  ) async {
+    for (XFile image in images) {
+      _createImageMessage(image, author);
+    }
+    await Future.delayed(Duration(milliseconds: 10));
+    _createTextMessage(partialText.text, author);
+    // _geminiTextResponseStream(partialText.text);
   }
 
   void _geminiTextResponse(String prompt) async {
@@ -64,6 +85,19 @@ class BasicChat extends _$BasicChat {
     isWriting
         ? isGeminiWriting.setIsWriting()
         : isGeminiWriting.setIsNotWriting();
+  }
+
+  void _createImageMessage(XFile image, User author) async {
+    final message = ImageMessage(
+      id: uuid.v4(),
+      author: author,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      uri: image.path,
+      name: image.name,
+      size: await image.length(),
+    );
+
+    state = [message, ...state];
   }
 
   void _createTextMessage(String text, User author) {

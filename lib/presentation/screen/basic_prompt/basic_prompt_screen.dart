@@ -35,7 +35,11 @@ class BasicPromptScreen extends ConsumerWidget {
         customBottomWidget: CustomBottomInput(
           onSend: (partialText, {images = const []}) {
             final basicChatNotifier = ref.read(basicChatProvider.notifier);
-            basicChatNotifier.addMessage(partialText: partialText, user: user);
+            basicChatNotifier.addMessage(
+              partialText: partialText,
+              user: user,
+              images: images,
+            );
             print(images);
           },
         ),
