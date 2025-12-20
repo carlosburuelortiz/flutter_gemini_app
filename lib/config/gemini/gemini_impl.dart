@@ -62,7 +62,7 @@ class GeminiImpl {
   }) async* {
     final formData = FormData();
     formData.fields.add(MapEntry('prompt', prompt));
-    formData.fields.add(MapEntry('chatId', prompt));
+    formData.fields.add(MapEntry('chatId', chatId));
 
     if (files.isNotEmpty) {
       for (final file in files) {
