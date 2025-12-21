@@ -24,35 +24,11 @@ class GeminiImpl {
     String prompt, {
     List<XFile> files = const [],
   }) async* {
-    final formData = FormData();
-    formData.fields.add(MapEntry('prompt', prompt));
-
-    if (files.isNotEmpty) {
-      for (final file in files) {
-        formData.files.add(
-          MapEntry(
-            'files',
-            await MultipartFile.fromFile(file.path, filename: file.name),
-          ),
-        );
-      }
-    }
-
-    // final body = jsonEncode({'prompt': prompt});
-    final response = await _http.post(
-      '/basic-prompt-stream',
-      data: formData,
-      options: Options(responseType: ResponseType.stream),
+    yield* _getStreamResponse(
+      endpoint: '/basic-prompt-stream',
+      prompt: prompt,
+      files: files,
     );
-
-    final stream = response.data.stream as Stream<List<int>>;
-    String buffer = '';
-
-    await for (final chunk in stream) {
-      final chunkString = utf8.decode(chunk, allowMalformed: true);
-      buffer += chunkString;
-      yield buffer;
-    }
   }
 
   Stream<String> getChatStream(
@@ -60,10 +36,28 @@ class GeminiImpl {
     String chatId, {
     List<XFile> files = const [],
   }) async* {
+    yield* _getStreamResponse(
+      endpoint: '/chat-stream',
+      prompt: prompt,
+      files: files,
+      formFiles: {'chatId': chatId},
+    );
+  }
+
+  Stream<String> _getStreamResponse({
+    required String endpoint,
+    required String prompt,
+    List<XFile> files = const [],
+    Map<String, dynamic> formFiles = const {},
+  }) async* {
+    //! Multipart
     final formData = FormData();
     formData.fields.add(MapEntry('prompt', prompt));
-    formData.fields.add(MapEntry('chatId', chatId));
+    for (final entry in formFiles.entries) {
+      formData.fields.add(MapEntry(entry.key, entry.value));
+    }
 
+    //! Arcchivos a subir
     if (files.isNotEmpty) {
       for (final file in files) {
         formData.files.add(
@@ -75,9 +69,8 @@ class GeminiImpl {
       }
     }
 
-    // final body = jsonEncode({'prompt': prompt});
     final response = await _http.post(
-      '/chat-stream',
+      endpoint,
       data: formData,
       options: Options(responseType: ResponseType.stream),
     );
