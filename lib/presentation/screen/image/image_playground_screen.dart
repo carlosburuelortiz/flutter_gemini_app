@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemini_app/presentation/provider/image/generated_images_provider.dart';
+import 'package:gemini_app/presentation/provider/image/is_generating_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:gemini_app/config/theme/app_theme.dart';
@@ -45,11 +48,14 @@ class ImagePlaygroundScreen extends StatelessWidget {
   }
 }
 
-class GeneratedImageGallery extends StatelessWidget {
+class GeneratedImageGallery extends ConsumerWidget {
   const GeneratedImageGallery({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final generatedImages = ref.watch(generatedImagesProvider);
+    final isGenerating = ref.watch(isGeneratingProvider);
+
     return SizedBox(
       height: 250,
       child: PageView(
@@ -60,18 +66,15 @@ class GeneratedImageGallery extends StatelessWidget {
         padEnds: true, // Cambiado a true para centrar la primera imagen
         children: [
           //* Placeholder hasta que se genere al menos una imagen
-          const EmptyPlaceholderImage(),
-          const GeneratingPlaceholderImage(),
+          if (generatedImages.isEmpty && !isGenerating)
+            const EmptyPlaceholderImage(),
 
           //* Aquí iremos colocando las imágenes generadas
-          GeneratedImage(
-            imageUrl:
-                'https://www.theclickcommunity.com/blog/wp-content/uploads/2018/04/woman-with-red-hair-outside-by-Cassandra-Casley.jpg',
+          ...generatedImages.map(
+            (imageUrl) => GeneratedImage(imageUrl: imageUrl),
           ),
-          GeneratedImage(
-            imageUrl:
-                'https://www.theclickcommunity.com/blog/wp-content/uploads/2018/04/woman-with-red-hair-outside-by-Cassandra-Casley.jpg',
-          ),
+
+          if (!isGenerating) const GeneratingPlaceholderImage(),
         ],
       ),
     );
