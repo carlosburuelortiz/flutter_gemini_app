@@ -7,7 +7,7 @@ import 'package:gemini_app/presentation/provider/image/is_generating_provider.da
 
 part 'generated_images_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class GeneratedImages extends _$GeneratedImages {
   final GeminiImpl gemini = GeminiImpl();
 
