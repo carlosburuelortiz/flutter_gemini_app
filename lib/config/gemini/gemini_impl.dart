@@ -102,7 +102,7 @@ class GeminiImpl {
     }
 
     try {
-      final response = await _http.post('image/generation', data: formData);
+      final response = await _http.post('/image-generation', data: formData);
       return response.data['imageUrl'];
     } catch (e) {
       print(e);

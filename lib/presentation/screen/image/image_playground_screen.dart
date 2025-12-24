@@ -19,11 +19,11 @@ const imageArtStyles = [
   'Estilo Manga',
 ];
 
-class ImagePlaygroundScreen extends StatelessWidget {
+class ImagePlaygroundScreen extends ConsumerWidget {
   const ImagePlaygroundScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: Text('Imágenes con Gemini')),
       backgroundColor: seedColor,
@@ -38,8 +38,16 @@ class ImagePlaygroundScreen extends StatelessWidget {
           Expanded(child: Container()),
           // Espacio para el prompt
           CustomBottomInput(
-            onSend: (p0, {List<XFile> images = const []}) {
-              // Todo:
+            onSend: (partialText, {List<XFile> images = const []}) {
+              final generatedImagesNotifier = ref.read(
+                generatedImagesProvider.notifier,
+              );
+
+              generatedImagesNotifier.clearImages();
+
+              String prompt = partialText.text;
+
+              generatedImagesNotifier.generateImage(prompt, images: images);
             },
           ),
         ],
@@ -59,6 +67,13 @@ class GeneratedImageGallery extends ConsumerWidget {
     return SizedBox(
       height: 250,
       child: PageView(
+        onPageChanged: (index) {
+          if (index == generatedImages.length - 1) {
+            ref
+                .read(generatedImagesProvider.notifier)
+                .generateImageWithPreviousPrompt();
+          }
+        },
         controller: PageController(
           viewportFraction: 0.6, // Muestra 1.5 imágenes en la pantalla
           initialPage: 0,
@@ -74,7 +89,7 @@ class GeneratedImageGallery extends ConsumerWidget {
             (imageUrl) => GeneratedImage(imageUrl: imageUrl),
           ),
 
-          if (!isGenerating) const GeneratingPlaceholderImage(),
+          if (isGenerating) const GeneratingPlaceholderImage(),
         ],
       ),
     );
