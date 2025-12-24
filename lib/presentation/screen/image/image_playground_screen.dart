@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemini_app/presentation/provider/image/generated_images_provider.dart';
 import 'package:gemini_app/presentation/provider/image/is_generating_provider.dart';
 import 'package:gemini_app/presentation/provider/image/selected_art_provider.dart';
+import 'package:gemini_app/presentation/widget/images/history_grid.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:gemini_app/config/theme/app_theme.dart';
@@ -36,7 +37,12 @@ class ImagePlaygroundScreen extends ConsumerWidget {
           // Selector de estilo de arte
           ArtStyleSelector(),
           // Llenar el espacio
-          Expanded(child: Container()),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: HistoryGrid(),
+            ),
+          ),
           // Espacio para el prompt
           CustomBottomInput(
             onSend: (partialText, {List<XFile> images = const []}) {
